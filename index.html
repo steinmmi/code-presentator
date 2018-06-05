@@ -1,0 +1,46 @@
+<head>
+  <link rel="stylesheet" href="http://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/styles/monokai-sublime.min.css">
+  <script src="http://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <style>
+  body { margin: 0; padding: 0; background-color: #23241F}
+  #drop_zone {
+  border: 5px solid blue;
+  width:  200px;
+  height: 100px;
+}
+.hidden {
+  display: none;
+}
+  </style>
+</head>
+
+<body>
+  <input type="file" id="file">
+  <pre><code class="javascript">
+  </code></pre>
+  <script>
+  function fileSelected() {
+    var selectedFile = document.getElementById('file').files[0];
+    var reader = new FileReader();
+    let text = ''
+    reader.readAsText(selectedFile);
+    reader.onload = function(event) {
+      document.getElementById('file').classList.add('hidden')
+      text = reader.result;
+      console.log(text)
+      arr = text.split('!§')
+    };
+
+    document.addEventListener('keypress', (event) => {
+      if(event.keyCode == 32) {
+      event.preventDefault();
+      document.querySelector(".javascript").innerHTML += arr[0]
+      hljs.highlightBlock(document.querySelector(".javascript"));
+      arr.shift()
+    }
+  })
+}
+document.getElementById('file').addEventListener('change', fileSelected)
+  </script>
+</body>
