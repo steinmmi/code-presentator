@@ -20,6 +20,9 @@
   <pre><code class="javascript">
   </code></pre>
   <script>
+  let speed = 50
+  let i = 0
+  let writing = false;
   function fileSelected() {
     var selectedFile = document.getElementById('file').files[0];
     var reader = new FileReader();
@@ -32,14 +35,42 @@
       arr = text.split('!§')
     };
 
-    document.addEventListener('keypress', (event) => {
+    document.addEventListener('keydown', (event) => {
       if(event.keyCode == 32) {
       event.preventDefault();
-      document.querySelector(".javascript").innerHTML += arr[0]
-      hljs.highlightBlock(document.querySelector(".javascript"));
-      arr.shift()
+
+      if(!writing) {
+        typeWriter(arr)
+        writing = true
     }
+  }
+  if(event.keyCode == 39 && speed > 5) speed-=5
+  if(event.keyCode == 37) speed+=5
   })
+}
+
+function typeWriter(arr) {
+  if (i < arr[0].length) {
+    console.log(arr[0][i])
+    document.querySelector(".javascript").innerHTML += arr[0][i];
+    i++;
+    if(arr[0][i] === '\n') hljs.highlightBlock(document.querySelector(".javascript"));
+
+    if(arr[0][i] === ' ') {
+      typeWriter(arr)
+      return null
+    }
+    else
+    setTimeout(function () {
+      typeWriter(arr)
+    }, speed);
+  }
+  else {
+    writing = false
+    arr.shift()
+    hljs.highlightBlock(document.querySelector(".javascript"));
+    i = 0
+  }
 }
 document.getElementById('file').addEventListener('change', fileSelected)
   </script>
