@@ -23,7 +23,7 @@
   let i = 0
   let writing = false;
   let actualText = ''
-  console.log = function(text) {
+  /*console.log = function(text) {
     container = document.querySelector('.result')
     container.innerHTML += `<p>${text}</p>`
     container.scrollTop = container.scrollHeight;
@@ -32,11 +32,9 @@
     container = document.querySelector('.result')
     container.innerHTML += `<p class='error'>${text}</p>`
     container.scrollTop = container.scrollHeight;
-  }
+  }*/
+  document.querySelector('#file').addEventListener('change', fileSelected)
   function fileSelected() {
-    document.querySelector('.code').classList.add(config.language)
-    hljs.highlightBlock(document.querySelector(".code"));
-    document.querySelector(".code").innerHTML = null;
     var selectedFile = document.getElementById('file').files[0];
     var reader = new FileReader();
     let text = ''
@@ -44,72 +42,12 @@
     reader.onload = function(event) {
       document.getElementById('file').classList.add('hidden')
       text = reader.result;
-      arr = text.split(config.keyword)
+      let regex = /§\['.*']{[0-9]+}/g
+      let res = text.match(regex)
+      console.log(res)
+      console.log(text.indexOf('o'))
+
     };
-
-    document.addEventListener('keydown', (event) => {
-      if(event.keyCode == 32) {
-      event.preventDefault();
-
-      if(!writing) {
-        typeWriter(arr)
-        writing = true
-    }
   }
-  if(event.keyCode == 13) {
-    try {
-      eval(actualText)
-    }
-    catch(error) {
-      console.error(error);
-    }
-    console.log("---------------------------")
-  }
-  if(event.keyCode == 39 && speed > 5) {
-    speed-=5
-    event.preventDefault();
-  }
-  
-  if(event.keyCode == 37) {
-    speed+=5
-    event.preventDefault();
-  }
-  })
-}
-
-function typeWriter(arr) {
-  if (i < arr[0].length) {
-    if(!config.lineBreak) {
-      if(arr[0][i] !== '\n') {
-        document.querySelector(".code").append(arr[0][i]);
-        actualText += arr[0][i]
-      }
-    } else {
-      document.querySelector(".code").append(arr[0][i]);
-      actualText += arr[0][i]
-    }
-window.scrollTo(0,document.body.scrollHeight);
-    i++;
-    if(arr[0][i] === '\n') {
-    	hljs.highlightBlock(document.querySelector(".code"));
-    }
-
-    if(arr[0][i] === ' ') {
-      typeWriter(arr)
-      return null
-    }
-    else
-    setTimeout(function () {
-      typeWriter(arr)
-    }, speed);
-  }
-  else {
-    writing = false
-    arr.shift()
-    hljs.highlightBlock(document.querySelector(".code"));
-    i = 0
-  }
-}
-document.querySelector("#file").addEventListener('change',fileSelected)
-  </script>
+    </script>
 </body>
