@@ -13,22 +13,50 @@ body {
 input[type='file'] {
   color: white;
 }
-code {
+.code {
   cursor: default;
-  margin-bottom: 20%;
+  margin-bottom: 250px;
 }
-code::selection, code *::selection{
+.hljs {
+  padding: 2em;
+}
+.code:focus {
+    outline:none;
+}
+.code::selection, .code *::selection{
   background-color: yellow;
   text-decoration: underline;
   color: black;
   font-style: italic;
 }
 
-code::-moz-selection, code *::-moz-selection{
+.code::-moz-selection, .code *::-moz-selection{
   background-color: yellow;
   color: black;
   font-style: italic;
 }
 .hidden {
   display: none;
+}
+
+.result {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 1em;
+  height: 150px;
+  overflow-y: scroll;
+  background-color: white;
+  font-family: monospace;
+  -webkit-box-shadow: inset 0px 6px 5px 0px #23241F;
+-moz-box-shadow: inset 0px 6px 5px 0px #23241F;
+box-shadow: inset 0px 6px 5px 0px #23241F;
+}
+.result p {
+  padding: 0;
+  border-bottom: 1px dotted #9E9F9D;
+}
+
+.result p.error {
+  color: red;
 }
