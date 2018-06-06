@@ -1,11 +1,14 @@
 <head>
+  <title>Code benefactor</title>
+  <link rel="icon" type="image/png" href="favicon.png" sizes="32x32">
   <link rel="stylesheet" href="http://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/styles/monokai-sublime.min.css">
   <link rel="stylesheet" href="style.css">
   <script src="http://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/highlight.min.js"></script>
   <script>
   const config = {
-    language: 'html',
-    lineBreak: true
+    language: 'javascript',
+    lineBreak: true,
+    keyword: "§!"
   }
   </script>
 </head>
@@ -14,15 +17,26 @@
   <input type="file" id="file">
   <pre><code class="code">
   </code></pre>
+  <div class="result"></div>
   <script>
-
-
   let speed = 50
   let i = 0
   let writing = false;
+  let actualText = ''
+  console.log = function(text) {
+    container = document.querySelector('.result')
+    container.innerHTML += `<p>${text}</p>`
+    container.scrollTop = container.scrollHeight;
+  }
+  console.error = function(text) {
+    container = document.querySelector('.result')
+    container.innerHTML += `<p class='error'>${text}</p>`
+    container.scrollTop = container.scrollHeight;
+  }
   function fileSelected() {
     document.querySelector('.code').classList.add(config.language)
     hljs.highlightBlock(document.querySelector(".code"));
+    document.querySelector(".code").innerHTML = null;
     var selectedFile = document.getElementById('file').files[0];
     var reader = new FileReader();
     let text = ''
@@ -30,8 +44,7 @@
     reader.onload = function(event) {
       document.getElementById('file').classList.add('hidden')
       text = reader.result;
-      console.log(text)
-      arr = text.split('!§')
+      arr = text.split(config.keyword)
     };
 
     document.addEventListener('keydown', (event) => {
@@ -43,25 +56,42 @@
         writing = true
     }
   }
-  event.preventDefault();
-  if(event.keyCode == 39 && speed > 5) speed-=5
-  if(event.keyCode == 37) speed+=5
+  if(event.keyCode == 13) {
+    try {
+      eval(actualText)
+    }
+    catch(error) {
+      console.error(error);
+    }
+    console.log("---------------------------")
+  }
+  if(event.keyCode == 39 && speed > 5) {
+    speed-=5
+    event.preventDefault();
+  }
+  
+  if(event.keyCode == 37) {
+    speed+=5
+    event.preventDefault();
+  }
   })
 }
 
 function typeWriter(arr) {
   if (i < arr[0].length) {
-    console.log(arr[0][i])
     if(!config.lineBreak) {
       if(arr[0][i] !== '\n') {
         document.querySelector(".code").append(arr[0][i]);
+        actualText += arr[0][i]
       }
-    } else document.querySelector(".code").append(arr[0][i]);
-
+    } else {
+      document.querySelector(".code").append(arr[0][i]);
+      actualText += arr[0][i]
+    }
+window.scrollTo(0,document.body.scrollHeight);
     i++;
     if(arr[0][i] === '\n') {
     	hljs.highlightBlock(document.querySelector(".code"));
-    	window.scrollTo(0,document.body.scrollHeight);
     }
 
     if(arr[0][i] === ' ') {
