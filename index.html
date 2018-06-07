@@ -21,9 +21,11 @@
   <script>
   let speed = 50
   let i = 0
+  let lineNb = 1
   let writing = false;
   let actualText = ''
-  console.log = function(text) {
+  let codeContainer = document.querySelector(".code")
+  /*console.log = function(text) {
     container = document.querySelector('.result')
     container.innerHTML += `<p>${text}</p>`
     container.scrollTop = container.scrollHeight;
@@ -32,84 +34,41 @@
     container = document.querySelector('.result')
     container.innerHTML += `<p class='error'>${text}</p>`
     container.scrollTop = container.scrollHeight;
-  }
+  }*/
   function fileSelected() {
-    document.querySelector('.code').classList.add(config.language)
-    hljs.highlightBlock(document.querySelector(".code"));
-    document.querySelector(".code").innerHTML = null;
+    codeContainer.classList.add(config.language)
+    codeContainer.innerHTML = null;
     var selectedFile = document.getElementById('file').files[0];
     var reader = new FileReader();
     let text = ''
     reader.readAsText(selectedFile);
     reader.onload = function(event) {
       document.getElementById('file').classList.add('hidden')
-      text = reader.result;
-      arr = text.split(config.keyword)
+      let text = reader.result;
+      text = getLine(text)
+      hljs.highlightBlock(codeContainer);
     };
-
-    document.addEventListener('keydown', (event) => {
-      if(event.keyCode == 32) {
-      event.preventDefault();
-
-      if(!writing) {
-        typeWriter(arr)
-        writing = true
-    }
-  }
-  if(event.keyCode == 13) {
-    try {
-      eval(actualText)
-    }
-    catch(error) {
-      console.error(error);
-    }
-    console.log("---------------------------")
-  }
-  if(event.keyCode == 39 && speed > 5) {
-    speed-=5
-    event.preventDefault();
-  }
-
-  if(event.keyCode == 37) {
-    speed+=5
-    event.preventDefault();
-  }
-  })
 }
 
-function typeWriter(arr) {
-  if (i < arr[0].length) {
-    if(!config.lineBreak) {
-      if(arr[0][i] !== '\n') {
-        document.querySelector(".code").append(arr[0][i]);
-        actualText += arr[0][i]
-      }
-    } else {
-      document.querySelector(".code").append(arr[0][i]);
-      actualText += arr[0][i]
-    }
-window.scrollTo(0,document.body.scrollHeight);
-    i++;
-    if(arr[0][i] === '\n') {
-    	hljs.highlightBlock(document.querySelector(".code"));
-    }
-
-    if(arr[0][i] === ' ') {
-      typeWriter(arr)
-      return null
-    }
-    else
-    setTimeout(function () {
-      typeWriter(arr)
-    }, speed);
+function getLine(text) {
+  let i = 0;
+  line = '';
+  if(text[i] !== '\n') {
+  while(text[i] != '\n' && text[i] != undefined) {
+    line+=text[i]
+    i++
   }
-  else {
-    writing = false
-    arr.shift()
-    hljs.highlightBlock(document.querySelector(".code"));
-    i = 0
-  }
+  text = text.substr(line.length)
+  codeContainer.innerHTML += `<p>/*${lineNb}*/ ${line}</p>`
+} else {
+  text = text.substr(1)
+  codeContainer.innerHTML += `<p>/*${lineNb}*/</p>`
 }
+lineNb++
+  if(text.length > 1)
+    getLine(text)
+}
+
 document.querySelector("#file").addEventListener('change',fileSelected)
   </script>
 </body>
